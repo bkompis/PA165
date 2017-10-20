@@ -9,6 +9,7 @@ import java.awt.Color;
 import java.util.List;
 import java.util.Map;
 
+import cz.fi.muni.carshop.exceptions.RequestedCarNotFoundException;
 import org.junit.Test;
 
 import org.junit.rules.ExpectedException;
@@ -18,6 +19,8 @@ import cz.fi.muni.carshop.entities.Car;
 import cz.fi.muni.carshop.enums.CarTypes;
 import cz.fi.muni.carshop.services.CarShopStorageService;
 import cz.fi.muni.carshop.services.CarShopStorageServiceImpl;
+
+import javax.smartcardio.CardNotPresentException;
 
 public class CarShopStorageServiceTest {
 
@@ -62,6 +65,18 @@ public class CarShopStorageServiceTest {
 		assertThat(service.getCheaperCarsOfSameTypeAndYear(new Car(Color.BLACK, CarTypes.AUDI, 2016, 900000)),
 				hasSize(3));
 
+	}
+
+	@Test(expected = RequestedCarNotFoundException.class)
+	public void sellCar_carNotFound() throws RequestedCarNotFoundException{
+		service.sellCar(new Car(Color.BLACK, CarTypes.ALFA_ROMEO, 2016, 5555));
+	}
+
+	@Test
+	public void sellCar_valid() throws RequestedCarNotFoundException{
+		Car newCar = new Car(Color.BLACK, CarTypes.AUDI, 2016, 55551);
+		service.addCarToStorage(newCar);
+		service.sellCar(newCar);
 	}
 
 }
